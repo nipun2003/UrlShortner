@@ -10,9 +10,7 @@ import (
 )
 
 func init() {
-	config.InitializeEnv()
-	db.InitDb()
-	db.InitZookeeper()
+	config.InitializeApp()
 }
 
 func main() {

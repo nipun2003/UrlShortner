@@ -7,15 +7,16 @@ import (
 
 type UrlController interface {
 	HandleCreateShortUrl(c *gin.Context)
+	HandleRedirect(c *gin.Context)
 }
 
 var urlController UrlController
 
 type UrlControllerImpl struct {
-	urlService services.UrlShortnerService
+	service services.UrlShortnerService
 }
 
-func (controller *UrlControllerImpl) HandleCreateShortUrl(c *gin.Context) {
+func (ctrl *UrlControllerImpl) HandleCreateShortUrl(c *gin.Context) {
 	var url = c.PostForm("url")
 	if url == "" {
 		c.JSON(400, gin.H{
@@ -23,7 +24,7 @@ func (controller *UrlControllerImpl) HandleCreateShortUrl(c *gin.Context) {
 		})
 		return
 	}
-	shortUrl, err := controller.urlService.ShortenUrl(url)
+	shortUrl, err := ctrl.service.ShortenUrl(url)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"error": "Error generating short URL",
@@ -36,10 +37,22 @@ func (controller *UrlControllerImpl) HandleCreateShortUrl(c *gin.Context) {
 	})
 }
 
+func (ctrl *UrlControllerImpl) HandleRedirect(c *gin.Context) {
+	shortUrl := c.Param("short_url")
+	originalUrl, err := ctrl.service.GetOriginalUrl(shortUrl)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error": "Error fetching original URL",
+		})
+		return
+	}
+	c.Redirect(301, originalUrl)
+}
+
 func NewUrlController() UrlController {
 	if urlController == nil {
 		urlController = &UrlControllerImpl{
-			urlService: services.NewUrlShortnerService(),
+			service: services.NewUrlShortnerService(),
 		}
 	}
 	return urlController
