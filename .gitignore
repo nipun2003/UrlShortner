@@ -1,0 +1,32 @@
+.env.*
+*.env
+!.env.example
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Temporary files
+*.tmp
+
+# Dependency directories (remove the comment below if you use Go modules)
+# /vendor/
+
+# Go workspace file
+go.work
+
+# IDE and editor specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*.orig
+.DS_Store
+bin/
